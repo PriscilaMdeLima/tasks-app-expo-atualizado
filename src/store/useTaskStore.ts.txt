@@ -1,0 +1,34 @@
+import { create } from 'zustand';
+import { TaskItem } from '../utils/handle-api';
+
+interface TaskStoreState {
+  tasks: TaskItem[];
+  loading: boolean;
+  setTasks: (tasks: TaskItem[]) => void;
+  setLoading: (loading: boolean) => void;
+  clearTasks: () => void;
+  addTask: (task: TaskItem) => void;
+  toggleTaskCompleted: (id: string) => void;
+  deleteTask: (id: string) => void;
+}
+
+const useTaskStore = create<TaskStoreState>((set) => ({
+  tasks: [],
+  loading: false,
+  setTasks: (tasks) => set({ tasks }),
+  setLoading: (loading) => set({ loading }),
+  clearTasks: () => set({ tasks: [] }),
+  addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
+  toggleTaskCompleted: (id) =>
+    set((state) => ({
+      tasks: state.tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      ),
+    })),
+  deleteTask: (id) =>
+    set((state) => ({
+      tasks: state.tasks.filter((task) => task.id !== id),
+    })),
+}));
+
+export default useTaskStore;
